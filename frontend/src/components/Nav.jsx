@@ -15,18 +15,33 @@ const Nav = (props) => {
   }
 
   const logout = async () => {
-    const response = await axios.post("https://connect-qbpn.onrender.com/api/v1/logout", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    });
-    // console.log("logout res " + response.success);
-    dispatch({
-      type: "CLEAR_USER",
-    });
-    props.toggleLogin();
+    try {
+      const response = await axios.post(
+        "https://connect-qbpn.onrender.com/api/v1/logout",
+        {},  // Pass an empty object as the second argument (data/body)
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+  
+      if (response.data.success) {
+        // Clear local authentication state or perform any additional client-side cleanup
+        dispatch({
+          type: "CLEAR_USER",
+        });
+        props.toggleLogin();
+      } else {
+        // Handle logout failure
+        console.error("Logout failed:", response.data.error);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
+  
 
   return (
     <>
